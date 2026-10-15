@@ -7,7 +7,9 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import signal
+import threading
 import subprocess
 import time
 import uuid
@@ -31,7 +33,39 @@ def checked_argv(settings: Settings, argv: list[str]) -> list[str]:
     return argv
 
 
-def run_checked(settings: Settings, argv: list[str], cwd: str) -> dict:
+def checked_environment(settings: Settings, env_overrides: dict[str, str] | None = None) -> dict[str, str]:
+    """Apply only environment variables approved by the per-user policy."""
+    if env_overrides is None:
+        env_overrides = {}
+    if not isinstance(env_overrides, dict) or len(env_overrides) > 24:
+        raise ValueError("env_overrides must be a dictionary of at most 24 entries")
+    for name, value in env_overrides.items():
+        if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+            raise ValueError("Invalid environment variable name")
+        if name not in settings.allowed_environment_variables:
+            raise PermissionError(f"Environment variable not allowed: {name}")
+        if not isinstance(value, str) or len(value) > 2048 or "\x00" in value or "\n" in value:
+            raise ValueError("Environment values must be short, single-line strings")
+    return {**os.environ, **env_overrides, "GIT_TERMINAL_PROMPT": "0"}
+
+
+def available_commands(settings: Settings) -> dict:
+    """Report approved commands that are visible on the service PATH."""
+    return {
+        "commands": [
+            {"name": name, "path": shutil.which(name), "available": shutil.which(name) is not None}
+            for name in settings.allowed_commands
+        ],
+        "env_allowlist": list(settings.allowed_environment_variables),
+        "command_timeout_seconds": settings.command_timeout_seconds,
+        "max_background_sessions": settings.max_background_sessions,
+    }
+
+
+def run_checked(
+    settings: Settings, argv: list[str], cwd: str,
+    env_overrides: dict[str, str] | None = None,
+) -> dict:
     """Execute a configured binary without shell interpretation or interactive input."""
     checked_argv(settings, argv)
     working_dir = resolve_path(settings, cwd)
@@ -43,7 +77,7 @@ def run_checked(settings: Settings, argv: list[str], cwd: str) -> dict:
         process = subprocess.Popen(
             argv, cwd=working_dir, stdin=subprocess.DEVNULL, stdout=output,
             stderr=subprocess.STDOUT, start_new_session=True, close_fds=True,
-            env={**os.environ, "GIT_TERMINAL_PROMPT": "0"},
+            env=checked_environment(settings, env_overrides),
         )
         try:
             code = process.wait(timeout=settings.command_timeout_seconds)
@@ -100,7 +134,20 @@ def _alive(record: dict) -> bool:
     return _linux_start_time(record["pid"]) == record["start_ticks"]
 
 
-def start_process(settings: Settings, argv: list[str], cwd: str) -> dict:
+def _record_exit_status(process: subprocess.Popen, identifier: str) -> None:
+    """Reap a finished subprocess and store its exit status for later inspection."""
+    code = process.wait()
+    path = session_dir() / f"{identifier}.exit.json"
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps({"exit_code": code}), encoding="utf-8")
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, path)
+
+
+def start_process(
+    settings: Settings, argv: list[str], cwd: str,
+    env_overrides: dict[str, str] | None = None,
+) -> dict:
     """Start a detached user-owned process with a private bounded-observation log."""
     checked_argv(settings, argv)
     working_dir = resolve_path(settings, cwd)
@@ -122,7 +169,7 @@ def start_process(settings: Settings, argv: list[str], cwd: str) -> dict:
         process = subprocess.Popen(
             argv, cwd=working_dir, stdin=subprocess.DEVNULL, stdout=stream,
             stderr=subprocess.STDOUT, start_new_session=True, close_fds=True,
-            env={**os.environ, "GIT_TERMINAL_PROMPT": "0"},
+            env=checked_environment(settings, env_overrides),
         )
     # /proc is populated just after fork/exec.
     start_ticks = None
@@ -137,6 +184,9 @@ def start_process(settings: Settings, argv: list[str], cwd: str) -> dict:
     }
     (directory / f"{identifier}.json").write_text(json.dumps(record), encoding="utf-8")
     os.chmod(directory / f"{identifier}.json", 0o600)
+    threading.Thread(
+        target=_record_exit_status, args=(process, identifier), daemon=True,
+    ).start()
     return {"session_id": identifier, "pid": process.pid, "state": "started"}
 
 
@@ -149,9 +199,12 @@ def process_output(settings: Settings, session_id: str, offset_bytes: int = 0) -
         handle.seek(max(0, offset_bytes))
         data = handle.read(length)
         next_offset = handle.tell()
+    exit_path = session_dir() / f"{session_id}.exit.json"
+    exit_code = json.loads(exit_path.read_text(encoding="utf-8"))["exit_code"] if exit_path.exists() else None
     return {
         "session_id": session_id, "pid": record["pid"],
-        "running": _alive(record), "next_offset_bytes": next_offset,
+        "running": _alive(record), "exit_code": exit_code,
+        "next_offset_bytes": next_offset,
         "output": limited(data.decode("utf-8", errors="replace"), settings.max_output_chars),
     }
 

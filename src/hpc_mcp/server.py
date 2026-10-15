@@ -11,7 +11,7 @@ from mcp.server.fastmcp import FastMCP
 
 from . import __version__
 from .commands import (
-    git_diff, git_status, process_output, run_checked, slurm_jobs,
+    available_commands, git_diff, git_status, process_output, run_checked, slurm_jobs,
     slurm_submit, scheduler_jobs, scheduler_submit, scheduler_detail,
     scheduler_cancel, start_process, terminate_process,
 )
@@ -99,14 +99,23 @@ def build_server(settings: Settings) -> FastMCP:
 
     if settings.enable_commands:
         @mcp.tool()
-        def execute_command(argv: list[str], cwd: str) -> dict:
-            """Run an allowlisted executable without shell; bounded timeout and output."""
-            return run_checked(settings, argv, cwd)
+        def list_allowed_commands() -> dict:
+            """List permitted executables visible in the MCP service environment."""
+            return available_commands(settings)
 
         @mcp.tool()
-        def start_background_process(argv: list[str], cwd: str) -> dict:
-            """Start an allowlisted user process, returning a persistent session ID."""
-            return start_process(settings, argv, cwd)
+        def execute_command(
+            argv: list[str], cwd: str, env_overrides: dict[str, str] | None = None,
+        ) -> dict:
+            """Run an allowed executable with approved environment overrides."""
+            return run_checked(settings, argv, cwd, env_overrides)
+
+        @mcp.tool()
+        def start_background_process(
+            argv: list[str], cwd: str, env_overrides: dict[str, str] | None = None,
+        ) -> dict:
+            """Start an allowed build/test/MPI process, returning a session ID."""
+            return start_process(settings, argv, cwd, env_overrides)
 
         @mcp.tool()
         def read_background_output(session_id: str, offset_bytes: int = 0) -> dict:
