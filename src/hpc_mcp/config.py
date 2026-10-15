@@ -35,6 +35,7 @@ class Settings:
     scheduler_bin_dir: Path | None = None
     site_tools: tuple[SiteTool, ...] = ()
     allowed_commands: tuple[str, ...] = ("hostname", "whoami", "pwd", "date", "uptime")
+    allowed_environment_variables: tuple[str, ...] = ()
     max_file_bytes: int = 2 * 1024 * 1024
     max_output_chars: int = 16_000
     command_timeout_seconds: int = 30
@@ -81,6 +82,12 @@ def load_settings(path: Path | None = None) -> Settings:
     allowed = commands.get("allowlist", ["hostname", "whoami", "pwd", "date", "uptime"])
     if not isinstance(allowed, list) or any(not isinstance(item, str) or not item for item in allowed):
         raise ValueError("commands.allowlist must be a list of command names")
+    env_allowlist = commands.get("env_allowlist", [])
+    if not isinstance(env_allowlist, list) or len(env_allowlist) > 24 or any(
+        not isinstance(name, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name)
+        for name in env_allowlist
+    ) or len(set(env_allowlist)) != len(env_allowlist):
+        raise ValueError("commands.env_allowlist must contain up to 24 unique variable names")
     raw_site_tools = config.get("site_tools", {})
     if not isinstance(raw_site_tools, dict):
         raise ValueError("site_tools must be a TOML table")
@@ -130,6 +137,7 @@ def load_settings(path: Path | None = None) -> Settings:
         scheduler_bin_dir=scheduler_bin_dir,
         site_tools=tuple(parsed_tools),
         allowed_commands=tuple(allowed),
+        allowed_environment_variables=tuple(env_allowlist),
         max_file_bytes=int(limits.get("max_file_bytes", 2 * 1024 * 1024)),
         max_output_chars=int(limits.get("max_output_chars", 16_000)),
         command_timeout_seconds=int(limits.get("command_timeout_seconds", 30)),

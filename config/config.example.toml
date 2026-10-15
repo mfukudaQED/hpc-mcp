@@ -14,7 +14,17 @@ enable_site_tools = false
 
 [commands]
 # This is a basename allowlist, not a sandbox. See docs/security.md.
+# Review a build-specific allowlist before enabling enable_commands:
+# allowlist = ["hostname", "whoami", "pwd", "date", "uptime",
+#              "cmake", "make", "ninja", "ctest", "gcc", "g++", "gfortran",
+#              "icx", "icpx", "ifx", "mpicc", "mpicxx", "mpifort", "mpiexec"]
 allowlist = ["hostname", "whoami", "pwd", "date", "uptime"]
+# Only these variable names may be overridden for an individual invocation.
+# Leave empty for strict least privilege.
+env_allowlist = []
+# For OpenMP and Intel MPI jobs after reviewing the site's policy:
+# env_allowlist = ["OMP_NUM_THREADS", "OMP_PROC_BIND", "OMP_PLACES",
+#                  "MKL_NUM_THREADS", "I_MPI_COLL_EXTERNAL", "I_MPI_FABRICS"]
 
 [scheduler]
 # Options: "slurm", "pbs" or "none". Default is "slurm" for compatibility.

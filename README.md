@@ -11,7 +11,7 @@ The code in this repository is independent of any particular cluster, user accou
 ## Features
 
 - Read-only by default: bounded file listing/reading/searching, Git status/diff, Slurm or PBS job inspection, and system information.
-- Opt-in file creation, guarded file replacement, allowlisted command execution, and managed background processes.
+- Opt-in file creation, guarded file replacement, allowlisted command execution (including CMake/Make/MPI workflows), and managed background processes with approved environment overrides and exit-code tracking.
 - Separately opt-in Slurm/PBS submission and cancellation, plus locally configured read-only site commands (e.g. point/quota).
 - User-level persistence via `systemd --user` when Linger is enabled, or a `cron` watchdog when available.
 - No root, setuid, shared daemon, or inbound MCP TCP server.
@@ -76,7 +76,7 @@ Automatic selection prefers usable `systemd --user` with `Linger=yes`, then cron
 
 See [config/config.example.toml](config/config.example.toml). The default policy denies all writes, commands and Slurm submissions. Editing the private config requires restarting the Tunnel and refreshing tools in ChatGPT.
 
-For testing with command execution enabled, you can restrict `[commands].allowlist` to `["whoami"]` and test `execute_command(argv=["whoami"], cwd="<an-allowed-root>")`. This is strictly opt-in.
+For testing with command execution enabled, you can restrict `[commands].allowlist` to `["whoami"]` and test `execute_command(argv=["whoami"], cwd="<an-allowed-root>")`. This is strictly opt-in. For compiler, build, and MPI tool setup, see [Development commands](docs/development_commands.md). The optional `list_allowed_commands` tool reports approved executables available on the service `PATH`.
 
 ## Slurm, PBS and site-specific commands
 
@@ -127,6 +127,7 @@ The tests use mocks for systemd, cron, and Slurm-related behavior; passing tests
 
 - [Tunnel setup](docs/tunnel_setup.md)
 - [Scheduler adapters and site-specific tools](docs/schedulers_and_site_tools.md)
+- [Development, build, and MPI command workflows](docs/development_commands.md)
 - [systemd and cron](docs/service_backends.md)
 - [Security and limitations](docs/security.md)
 - [Architecture (Japanese)](docs/design_JA.md)

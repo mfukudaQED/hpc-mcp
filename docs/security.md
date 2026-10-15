@@ -11,11 +11,15 @@ This is not a kernel sandbox; filesystem TOCTOU races and novel secret names
 are not exhaustively prevented.
 
 When `enable_commands = true`, the process can execute allowed binaries with the
-full Linux account privileges. Even an allowlisted `python3`, `make`, `git`, or
-`bash` may execute arbitrary programs or read secrets. A command allowlist is
+full Linux account privileges. Even an allowlisted `python3`, `make`, `cmake`,
+`mpiexec`, `git`, or `bash` may execute arbitrary programs or read secrets. A command allowlist is
 **not a security boundary**. Do not enable this on shared identities or assume
 that file roots restrict it. Model output and retrieved source code may carry
-malicious prompt-injection instructions.
+malicious prompt-injection instructions. `commands.env_allowlist` permits only
+named variable overrides, but is not a sandbox; variables such as `LD_PRELOAD`,
+`PATH`, or `PYTHONPATH` can alter executable selection and code loading. Prefer
+reviewed OpenMP/MPI variables only. Build and MPI tools should run under the
+appropriate scheduler allocation, never unreviewed on an HPC login node.
 
 Use a dedicated Linux account with limited permissions, a container/namespace
 sandbox, or a separately approved scheduler runner if hard command isolation
