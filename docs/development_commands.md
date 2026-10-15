@@ -65,6 +65,13 @@ handled by dedicated scheduler tools, not by adding unrestricted `sbatch`,
 
 ## Machine-local configuration
 
+For sham, the reviewed starting list is in
+[`config/command_allowlist.sham.example.toml`](../config/command_allowlist.sham.example.toml).
+It is an example rather than a live policy; merge its `[commands]` section into
+the private per-user configuration after checking the installed compiler/MPI
+modules. Adding `mpiexec` to a name allowlist does not make it visible on the
+service `PATH`, nor does it allocate compute nodes.
+
 Edit the private `~/.config/hpc-mcp/config.toml` **on each machine**, not
 the committed template, to grant exactly the commands required:
 
