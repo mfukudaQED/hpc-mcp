@@ -1,0 +1,38 @@
+# Each user gets an independent config at ~/.config/hpc-mcp/config.toml.
+[filesystem]
+roots = ["~/work"]
+
+[permissions]
+enable_writes = false
+enable_commands = false
+# Generic mutation tools: opt in separately after reviewing scheduler policy.
+enable_scheduler_submit = false
+enable_scheduler_cancel = false
+enable_site_tools = false
+# Legacy Slurm setting remains accepted for older installations:
+# enable_slurm_submit = false
+
+[commands]
+# This is a basename allowlist, not a sandbox. See docs/security.md.
+allowlist = ["hostname", "whoami", "pwd", "date", "uptime"]
+
+[scheduler]
+# Options: "slurm", "pbs" or "none". Default is "slurm" for compatibility.
+type = "slurm"
+# Set for scheduler binaries missing from the Tunnel service PATH.
+# Example: bin_dir = "/opt/slurm/bin"
+bin_dir = ""
+
+# Site-specific, fixed-argument read-only enquiries (optional):
+# [site_tools.point_balance]
+# description = "Check remaining compute points"
+# argv = ["/absolute/path/to/point"]
+# read_only = true
+# cwd = "~/work"
+# timeout_seconds = 10
+
+[limits]
+max_file_bytes = 2097152
+max_output_chars = 16000
+command_timeout_seconds = 30
+max_background_sessions = 4

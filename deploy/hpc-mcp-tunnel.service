@@ -1,0 +1,20 @@
+[Unit]
+Description=Per-user HPC MCP tunnel-client
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/hpc-mcp/tunnel.env
+ExecStart=%h/.local/bin/tunnel-client run --profile hpc-mcp --health.listen-addr=127.0.0.1:0
+Restart=on-failure
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+CPUQuota=10%
+MemoryMax=512M
+TasksMax=64
+UMask=0077
+
+[Install]
+WantedBy=default.target
