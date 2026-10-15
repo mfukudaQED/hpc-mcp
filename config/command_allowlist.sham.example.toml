@@ -1,0 +1,47 @@
+# Opt-in command allowlist for a sham-style Linux/HPC development environment.
+# Merge this [commands] table into ~/.config/hpc-mcp/config.toml.
+# Set [permissions] enable_commands = true (already enabled on sham).
+# This is NOT a sandbox: make, cmake, compilers, Python, Git and MPI may
+# execute other programs with the full privileges of the Linux user.
+#
+# Verified on the HPC MCP service PATH (2026-10-15):
+#   cmake, make, ctest, gcc, g++, gfortran, ar, ranlib, pkg-config,
+#   file, grep, find, diff, ldd, nm, readelf, objdump, lscpu, gdb, valgrind
+#
+# Not visible on the service PATH (requires module/service PATH review):
+#   mpiexec, mpirun, mpicc, mpicxx, mpifort, icx, icpx, ifx, ifort
+#
+# Commands in the MPI group are pre-approved by name, but unavailable
+# until the service PATH includes the correct Intel MPI/oneAPI binaries.
+# Run MPI workloads within a Slurm/PBS allocation, not on a login node.
+
+[commands]
+allowlist = [
+  # Existing permissions, preserved.
+  "hostname", "whoami", "pwd", "date", "uptime",
+  "git", "python3", "ls", "mkdir",
+
+  # Build / tests.
+  "cmake", "make", "ctest",
+
+  # GNU compilers / libraries.
+  "gcc", "g++", "gfortran", "ar", "ranlib", "pkg-config",
+
+  # Inspection and debugging.
+  "file", "grep", "find", "diff", "ldd", "nm", "readelf",
+  "objdump", "lscpu", "gdb", "valgrind",
+
+  # Site-specific compiler and MPI wrappers: not on current service PATH.
+  "icx", "icpx", "ifx", "ifort", "icc", "icpc",
+  "mpicc", "mpicxx", "mpifort", "mpiicc", "mpiicpc",
+  "mpiifort", "mpiifx", "mpiicx", "mpiicpx",
+
+  # MPI launchers: run only after reviewing the Slurm/PBS allocation.
+  "mpiexec", "mpirun",
+]
+
+# Variable overrides are optional and must also be specifically authorized.
+env_allowlist = [
+  "OMP_NUM_THREADS", "OMP_PROC_BIND", "OMP_PLACES",
+  "MKL_NUM_THREADS", "I_MPI_COLL_EXTERNAL", "I_MPI_FABRICS",
+]
