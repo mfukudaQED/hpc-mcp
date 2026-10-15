@@ -128,6 +128,7 @@ The tests use mocks for systemd, cron, and Slurm-related behavior; passing tests
 - [Tunnel setup](docs/tunnel_setup.md)
 - [Scheduler adapters and site-specific tools](docs/schedulers_and_site_tools.md)
 - [Development, build, and MPI command workflows](docs/development_commands.md)
+- [sham Intel oneAPI / Intel MPI service setup](docs/sham_oneapi_service.md)
 - [systemd and cron](docs/service_backends.md)
 - [Security and limitations](docs/security.md)
 - [Architecture (Japanese)](docs/design_JA.md)
