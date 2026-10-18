@@ -30,13 +30,13 @@ The example assumes the checkout is at `~/work/hpc-mcp`; adjust subsequent paths
 ```bash
 mkdir -p ~/work
 cd ~/work
-git clone https://github.com/YOUR-ACCOUNT/hpc-mcp.git
+git clone https://github.com/mfukudaQED/hpc-mcp.git
 cd hpc-mcp
 ./install.sh
 vi ~/.config/hpc-mcp/config.toml
 ```
 
-The repository address is a placeholder until the project is published. By default, the per-user configuration permits read-only access under `~/work`. Keep it read-only for the first connection. The MCP executable is `~/work/hpc-mcp/.venv/bin/hpc-mcp`, using stdio, not an inbound TCP port.
+By default, the per-user configuration permits read-only access under `~/work`. Keep it read-only for the first connection. The MCP executable is `~/work/hpc-mcp/.venv/bin/hpc-mcp`, using stdio, not an inbound TCP port.
 
 ## 3. Install the official tunnel-client
 

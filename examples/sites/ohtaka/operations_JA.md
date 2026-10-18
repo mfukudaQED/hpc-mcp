@@ -1,6 +1,6 @@
 # HPC MCP 運用手順：コマンド許可と Tunnel API キー更新
 
-対象：HPC MCP v0.2.0、ユーザーごとの OpenAI Secure MCP Tunnel。
+対象：HPC MCP v0.3.0、ユーザーごとの OpenAI Secure MCP Tunnel。
 本書はohtakaでの運用例であり、HPC-MCPの汎用運用手順は[こちら](../../../docs/operations_JA.md)を参照する。RDCを使用しない運用を想定する。通常の Linux ユーザー権限で操作し、`sudo` は使用しない。
 
 ohtaka (System B) を想定した構成例（各人の実際のパスに置換すること）：
@@ -158,7 +158,7 @@ vi ~/.config/hpc-mcp/tunnel.env
 ファイル内の **既存の行を置き換える**（API キーの値をここや ChatGPT に書かないこと）。
 
 ```ini
-CONTROL_PLANE_API_KEY=sk-REPLACE_WITH_NEW_RUNTIME_KEY
+CONTROL_PLANE_API_KEY=REPLACE_WITH_NEW_RUNTIME_KEY
 ```
 
 ```bash

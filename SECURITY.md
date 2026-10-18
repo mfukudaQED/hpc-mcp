@@ -1,6 +1,6 @@
 # Security policy
 
-HPC MCP 0.1.0 is a research prototype without a guaranteed security-support window. The maintainer should publish a private security contact before accepting external users.
+HPC MCP 0.3.0 is a research prototype without a guaranteed security-support window. The maintainer should publish a private security contact before accepting external users.
 
 Do not publish credentials or exploitable details in a public issue. If no private channel is available, withhold sensitive reproduction steps until a secure reporting method has been established.
 

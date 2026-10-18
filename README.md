@@ -34,6 +34,17 @@ cd hpc-mcp
 ./install.sh
 ```
 
+If the system `python3` is older than Python 3.11, explicitly choose a suitable
+interpreter when creating the environment:
+
+```bash
+./install.sh --python /path/to/python3.11
+```
+
+An existing `.venv` is reused and must itself use Python 3.11 or newer. The
+installer will not silently replace an incompatible environment. See
+[Updating an existing installation](docs/upgrading.md).
+
 Installation creates `.venv` and, if absent, `~/.config/hpc-mcp/config.toml` with mode 0600. It does **not** activate a Tunnel.
 
 Copy and edit the local config to select your authorized filesystem roots (default `~/work`). Start with read-only permissions. To connect ChatGPT, follow [Tunnel setup](docs/tunnel_setup.md) and [Service backends](docs/service_backends.md). Keep `~/.config/hpc-mcp/tunnel.env` and the Tunnel profile outside the repository.
@@ -145,6 +156,7 @@ The tests use mocks for systemd, cron, and Slurm-related behavior; passing tests
 
 ## Documentation
 
+- [Release history](CHANGELOG.md)
 - [Site-specific examples (sham and ohtaka)](examples/sites/README.md)
 
 - [HPC MCP 運用手順（日本語）：コマンド許可と Tunnel API キー更新](docs/operations_JA.md)
@@ -159,7 +171,7 @@ The tests use mocks for systemd, cron, and Slurm-related behavior; passing tests
 
 ## Status
 
-Version 0.2.0 is a research prototype. MCP tool discovery, direct stdio execution and a private Tunnel deployment have been tested on one HPC system; live PBS compatibility, broad portability, the cron backend on a real `Linger=no` host, and independent multi-user deployments are **not yet verified**.
+Version 0.3.0 is a research prototype. MCP tool discovery, direct stdio execution and a private Tunnel deployment have been tested on one HPC system; live PBS compatibility, broad portability, the cron backend on a real `Linger=no` host, and independent multi-user deployments are **not yet verified**.
 
 This repository distributes source code; it does **not** publish a public ChatGPT plugin, nor does it contain or grant Tunnel access. HPC MCP is an independent community project and is not an official OpenAI product.
 

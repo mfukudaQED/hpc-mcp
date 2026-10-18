@@ -1,6 +1,6 @@
 # Verification status
 
-HPC MCP **0.2.0** remains a research prototype. Verification below distinguishes
+HPC MCP **0.3.0** remains a research prototype. Verification below distinguishes
 automated tests from actual cluster or ChatGPT host tests.
 
 ## Verified

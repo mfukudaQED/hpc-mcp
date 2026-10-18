@@ -1,6 +1,6 @@
 # HPC MCP 設計書
 
-**Version:** 0.2.0 (MVP)
+**Version:** 0.3.0 (MVP)
 **Target:** Linux/HPC (初期検証例: sham / Slurm。サイト固有設定は `examples/sites/` に分離)
 **Date:** 2026-10-15
 

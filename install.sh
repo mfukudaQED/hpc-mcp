@@ -10,6 +10,7 @@ fi
 
 BACKEND=auto
 ACTION=install
+PYTHON_BIN=python3
 while (($#)); do
     case "$1" in
         --activate) ACTION=activate ;;
@@ -17,13 +18,23 @@ while (($#)); do
         --backend) shift; BACKEND="${1:-}" ;;
         --service-status) ACTION=status ;;
         --remove-cron) ACTION=remove-cron ;;
+        --python=*) PYTHON_BIN="${1#--python=}" ;;
+        --python)
+            shift
+            if (($# == 0)); then
+                printf 'Error: --python requires a Python executable.\n' >&2
+                exit 2
+            fi
+            PYTHON_BIN="$1" ;;
         -h|--help)
             cat <<'USAGE'
-Usage: ./install.sh [--activate] [--backend=auto|systemd|cron|none]
-       ./install.sh --service-status
-       ./install.sh --remove-cron
+Usage: ./install.sh [--python PATH] [--activate] [--backend=auto|systemd|cron|none]
+       ./install.sh [--python PATH] --service-status
+       ./install.sh [--python PATH] --remove-cron
 
 Default: install/update the Python package and user config; do not start services.
+--python: select the Python 3.11+ interpreter when creating a new .venv.
+          An existing .venv is reused; it is never replaced automatically.
 --activate: set up per-user startup after private Tunnel credentials exist.
 auto: persistent systemd --user if Linger=yes; otherwise usable user cron.
 Neither root permissions nor any system-wide configuration is modified.
@@ -41,13 +52,32 @@ esac
 
 cd "$(dirname "$(readlink -f "$0")")"
 
+if [[ -z "$PYTHON_BIN" ]]; then
+    printf 'Error: --python requires a non-empty executable path.\n' >&2
+    exit 2
+fi
+
 if [[ "$ACTION" == status || "$ACTION" == remove-cron ]]; then
-    python3 deploy/service_manager.py --action "$ACTION"
+    STATUS_PYTHON="$PYTHON_BIN"
+    if [[ "$PYTHON_BIN" == python3 && -x .venv/bin/python ]]; then
+        STATUS_PYTHON=.venv/bin/python
+    fi
+    "$STATUS_PYTHON" deploy/service_manager.py --action "$ACTION"
     exit
 fi
 
 if [[ ! -x .venv/bin/python ]]; then
-    python3 -m venv .venv
+    if ! "$PYTHON_BIN" -c 'import sys; sys.exit(sys.version_info < (3, 11))'; then
+        printf 'Error: Python 3.11+ is required. Use --python /path/to/python.\n' >&2
+        exit 2
+    fi
+    "$PYTHON_BIN" -m venv .venv
+fi
+
+if ! .venv/bin/python -c 'import sys; sys.exit(sys.version_info < (3, 11))'; then
+    printf 'Error: Existing .venv uses an unsupported Python version.\n' >&2
+    printf 'Preserve or move the old .venv before creating a new one with --python.\n' >&2
+    exit 2
 fi
 .venv/bin/python -m pip install -e .
 

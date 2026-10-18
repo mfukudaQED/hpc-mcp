@@ -30,6 +30,6 @@ def test_stdio_discovery_and_ping(tmp_path: Path):
                 assert "execute_command" not in names
                 result = await client.call_tool("ping")
                 assert not result.isError
-                assert any("0.2.0" in getattr(block, "text", "") for block in result.content)
+                assert any("0.3.0" in getattr(block, "text", "") for block in result.content)
 
     asyncio.run(check())

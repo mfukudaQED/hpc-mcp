@@ -30,7 +30,10 @@ start or stop the existing Tunnel.
 
 If the existing environment is broken, inspect the Python interpreter
 and environment before changing it. The current HPC MCP release expects
-Python 3.11+; `install.sh` uses `python3` when creating a new `.venv`.
+Python 3.11+; `install.sh` uses `python3` when creating a new `.venv` unless
+`--python /path/to/python3.11` (or `--python=/path/to/python3.11`) is specified.
+It will not automatically replace an existing incompatible `.venv`; move or
+preserve that environment deliberately before recreating it.
 
 **Note:** New changes are only available to other users after their
 maintainer publishes/pushes the corresponding commits. An existing
