@@ -46,3 +46,10 @@ max_file_bytes = 2097152
 max_output_chars = 16000
 command_timeout_seconds = 30
 max_background_sessions = 4
+# MCP File Manager is an OPTIONAL package installed into this server's .venv.
+# See docs/file_manager.md and docs/upgrading.md for installation / upgrade.
+# Older [extensions.file_viewer] enabled=true is accepted as a fallback.
+[extensions.file_manager]
+enabled = false
+# Editing additionally requires [permissions].enable_writes = true.
+enable_edit = false

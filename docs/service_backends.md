@@ -21,6 +21,14 @@ their own ChatGPT Tunnel credentials.
 Select explicitly with `--backend=systemd` or `--backend=cron`, or use
 `--backend=none` for install-only mode.
 
+## Updating a running installation
+
+After fetching new HPC MCP code, run `./install.sh` to update the package
+without replacing your private `config.toml`. Manually merge any newly
+introduced settings, restart your **existing** user-owned backend, and
+refresh tools in ChatGPT. See the complete [upgrade guide](upgrading.md),
+including how to install or upgrade the optional [MCP File Manager](file_manager.md).
+
 ## systemd backend
 
 Copies `deploy/hpc-mcp-tunnel.service` to

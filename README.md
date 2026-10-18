@@ -78,6 +78,26 @@ See [config/config.example.toml](config/config.example.toml). The default policy
 
 For testing with command execution enabled, you can restrict `[commands].allowlist` to `["whoami"]` and test `execute_command(argv=["whoami"], cwd="<an-allowed-root>")`. This is strictly opt-in. For compiler, build, and MPI tool setup, see [Development commands](docs/development_commands.md). The optional `list_allowed_commands` tool reports approved executables available on the service `PATH`.
 
+## Optional MCP File Manager
+
+[**MCP File Manager**](docs/file_manager.md) is a separately installed,
+opt-in MCP Apps browser and text editor. It uses the existing HPC MCP
+connection, authorized filesystem roots and Secure MCP Tunnel: no second
+server is needed. File browsing is read-only by default. Text editing
+requires BOTH `[extensions.file_manager].enable_edit = true` and
+`[permissions].enable_writes = true` (which also enables HPC MCP's core
+file-write tools).
+
+The current File Manager UI v16 asks ChatGPT to prefer a fullscreen/tab
+display and starts with its File Explorer collapsed. The ChatGPT host
+ultimately chooses how to display the MCP App. See the
+[File Manager setup and usage guide](docs/file_manager.md).
+
+**Already using HPC MCP?** See [**Updating an existing installation**](docs/upgrading.md)
+for the exact `git pull`, `./install.sh`, optional package installation,
+per-user service restart and ChatGPT **Update tools** steps. Your existing
+private config and Tunnel credentials are not overwritten by the installer.
+
 ## Slurm, PBS and site-specific commands
 
 HPC MCP supports **Slurm** and **PBS/OpenPBS** through scheduler adapters.

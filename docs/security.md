@@ -10,6 +10,17 @@ roots and sensitive path names. Symlinks resolving outside a root are refused.
 This is not a kernel sandbox; filesystem TOCTOU races and novel secret names
 are not exhaustively prevented.
 
+The optional [MCP File Manager](file_manager.md) runs inside the same per-user
+server, inherits the approved filesystem roots, and must be installed
+separately. Enabling `[extensions.file_manager].enabled = true` alone does
+not enable text editing. Editing requires BOTH
+`[extensions.file_manager].enable_edit = true` and
+`[permissions].enable_writes = true`. The latter is a **global** HPC MCP
+opt-in that also enables the core filesystem write tools. Review the entire
+write policy before switching it on. File Manager adds its own ownership,
+file type, size, and revision checks; it does not create Git commits or
+backups automatically.
+
 When `enable_commands = true`, the process can execute allowed binaries with the
 full Linux account privileges. Even an allowlisted `python3`, `make`, `cmake`,
 `mpiexec`, `git`, or `bash` may execute arbitrary programs or read secrets. A command allowlist is

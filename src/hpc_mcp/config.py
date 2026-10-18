@@ -31,6 +31,8 @@ class Settings:
     enable_scheduler_submit: bool = False
     enable_scheduler_cancel: bool = False
     enable_site_tools: bool = False
+    enable_file_viewer: bool = False
+    enable_file_manager_edit: bool = False
     scheduler_type: str = "slurm"
     scheduler_bin_dir: Path | None = None
     site_tools: tuple[SiteTool, ...] = ()
@@ -133,6 +135,16 @@ def load_settings(path: Path | None = None) -> Settings:
         enable_scheduler_submit=submitted,
         enable_scheduler_cancel=permissions.get("enable_scheduler_cancel", False) is True,
         enable_site_tools=site_tools_enabled,
+        enable_file_viewer=(
+            config.get("extensions", {}).get("file_manager", {}).get(
+                "enabled",
+                config.get("extensions", {}).get("file_viewer", {}).get("enabled", False),
+            ) is True
+        ),
+        enable_file_manager_edit=(
+            config.get("extensions", {}).get("file_manager", {}).get("enable_edit", False) is True
+            and permissions.get("enable_writes", False) is True
+        ),
         scheduler_type=scheduler_type,
         scheduler_bin_dir=scheduler_bin_dir,
         site_tools=tuple(parsed_tools),

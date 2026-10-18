@@ -159,6 +159,22 @@ def build_server(settings: Settings) -> FastMCP:
             # A fixed-argument site tool accepts no user-controlled command text.
             mcp.tool(name="site_" + spec.name, description=spec.description)(make_call(spec))
 
+    if settings.enable_file_viewer:
+        try:
+            from mcp_file_manager.extension import register_file_manager
+        except ImportError as exc:
+            raise RuntimeError(
+                "MCP File Manager enabled but its Python package is not installed. "
+                "Install the optional package before enabling the extension."
+            ) from exc
+        register_file_manager(
+            mcp,
+            roots=settings.roots,
+            max_file_bytes=settings.max_file_bytes,
+            max_response_chars=min(settings.max_output_chars, 12_000),
+            enable_edit=settings.enable_file_manager_edit,
+        )
+
     return mcp
 
 
