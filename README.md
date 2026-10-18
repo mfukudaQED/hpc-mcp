@@ -29,12 +29,12 @@ The code in this repository is independent of any particular cluster, user accou
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR-ACCOUNT/hpc-mcp.git
+git clone https://github.com/mfukudaQED/hpc-mcp.git
 cd hpc-mcp
 ./install.sh
 ```
 
-The repository URL above is a placeholder until publication. Installation creates `.venv` and, if absent, `~/.config/hpc-mcp/config.toml` with mode 0600. It does **not** activate a Tunnel.
+Installation creates `.venv` and, if absent, `~/.config/hpc-mcp/config.toml` with mode 0600. It does **not** activate a Tunnel.
 
 Copy and edit the local config to select your authorized filesystem roots (default `~/work`). Start with read-only permissions. To connect ChatGPT, follow [Tunnel setup](docs/tunnel_setup.md) and [Service backends](docs/service_backends.md). Keep `~/.config/hpc-mcp/tunnel.env` and the Tunnel profile outside the repository.
 
@@ -145,10 +145,13 @@ The tests use mocks for systemd, cron, and Slurm-related behavior; passing tests
 
 ## Documentation
 
+- [Site-specific examples (sham and ohtaka)](examples/sites/README.md)
+
+- [HPC MCP 運用手順（日本語）：コマンド許可と Tunnel API キー更新](docs/operations_JA.md)
 - [Tunnel setup](docs/tunnel_setup.md)
 - [Scheduler adapters and site-specific tools](docs/schedulers_and_site_tools.md)
 - [Development, build, and MPI command workflows](docs/development_commands.md)
-- [sham Intel oneAPI / Intel MPI service setup](docs/sham_oneapi_service.md)
+- [sham Intel oneAPI / Intel MPI service setup](examples/sites/sham/README.md)
 - [systemd and cron](docs/service_backends.md)
 - [Security and limitations](docs/security.md)
 - [Architecture (Japanese)](docs/design_JA.md)

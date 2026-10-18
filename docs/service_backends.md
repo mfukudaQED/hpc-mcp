@@ -119,4 +119,4 @@ File changes use approved roots and SHA-256 guarded overwrite. **The command
 allowlist is not an OS sandbox:** interpreters and build tools may run arbitrary
 user-privileged code and read outside the file roots. Use only with a trusted,
 private per-user Tunnel; review all modifications and untrusted source content.
-Never use administrator privileges on sham.
+Never use administrator privileges to run this per-user service on any cluster.

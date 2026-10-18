@@ -66,7 +66,7 @@ handled by dedicated scheduler tools, not by adding unrestricted `sbatch`,
 ## Machine-local configuration
 
 For sham, the reviewed starting list is in
-[`config/command_allowlist.sham.example.toml`](../config/command_allowlist.sham.example.toml).
+[`examples/sites/sham/command_allowlist.example.toml`](../examples/sites/sham/command_allowlist.example.toml).
 It is an example rather than a live policy; merge its `[commands]` section into
 the private per-user configuration after checking the installed compiler/MPI
 modules. Adding `mpiexec` to a name allowlist does not make it visible on the
@@ -162,7 +162,7 @@ start_background_process(
 )
 ```
 
-For sham's existing Intel MPI workflow, `mpiexec` together with
+For sham's existing Intel MPI workflow (see [site example](../examples/sites/sham/README.md)), `mpiexec` together with
 `I_MPI_COLL_EXTERNAL=no` and `I_MPI_FABRICS=shm:ofi` is the tested
 starting point; `srun` has previously shown problems with that stack.
 The preferred execution location is still a **reviewed Slurm batch script**

@@ -24,10 +24,15 @@ contains nor prints credentials.
 ## Install or update
 
 Run all commands **as the ordinary Linux user; never use sudo**.
+These are example commands for this site's specific module setup. Check
+the installed compiler/MPI modules before use. The launch script is
+intended for the per-user systemd service, and requires an existing
+private Tunnel profile and credentials.
 
 ```bash
 cd ~/work/hpc-mcp
-install -m 0700 deploy/sham_oneapi_tunnel.sh ~/.local/bin/hpc-mcp-oneapi-launch
+mkdir -p ~/.local/bin
+install -m 0700 examples/sites/sham/sham_oneapi_tunnel.sh ~/.local/bin/hpc-mcp-oneapi-launch
 
 mkdir -p ~/.config/systemd/user/hpc-mcp-tunnel.service.d
 cat > ~/.config/systemd/user/hpc-mcp-tunnel.service.d/oneapi.conf <<'EOF'
@@ -57,10 +62,10 @@ an MPI calculation.
 Use an approved working directory such as `~/work/hpc-mcp`:
 
 ```text
-execute_command(argv=["ifx", "--version"], cwd="/home/fukuda/work/hpc-mcp")
-execute_command(argv=["icx", "--version"], cwd="/home/fukuda/work/hpc-mcp")
-execute_command(argv=["mpiexec", "-version"], cwd="/home/fukuda/work/hpc-mcp")
-execute_command(argv=["mpiifort", "-show"], cwd="/home/fukuda/work/hpc-mcp")
+execute_command(argv=["ifx", "--version"], cwd="/home/USER/work/hpc-mcp")
+execute_command(argv=["icx", "--version"], cwd="/home/USER/work/hpc-mcp")
+execute_command(argv=["mpiexec", "-version"], cwd="/home/USER/work/hpc-mcp")
+execute_command(argv=["mpiifort", "-show"], cwd="/home/USER/work/hpc-mcp")
 ```
 
 All four commands succeeded on 2026-10-15 after restarting the user

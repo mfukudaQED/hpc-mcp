@@ -1,7 +1,7 @@
 # HPC MCP 設計書
 
 **Version:** 0.2.0 (MVP)
-**Target:** Linux/HPC (initial deployment: sham, Rocky Linux 8 / Slurm)
+**Target:** Linux/HPC (初期検証例: sham / Slurm。サイト固有設定は `examples/sites/` に分離)
 **Date:** 2026-10-15
 
 ## 1. 目的
@@ -18,7 +18,7 @@ ChatGPT account A          ChatGPT account B
 OpenAI Secure MCP Tunnel A   Secure MCP Tunnel B
        ^ HTTPS outbound           ^ HTTPS outbound
        |                           |
-sham / Linux userA           sham / Linux userB
+HPC host / Linux userA       HPC host / Linux userB
  tunnel-client A              tunnel-client B
        | stdio                      | stdio
  hpc-mcp A                    hpc-mcp B
@@ -36,7 +36,7 @@ FS / Slurm / Git              FS / Slurm / Git
 
 ## 3. ユーザーストーリー
 
-1. 研究者が自分のTunnelを作成し、自分のshamアカウントに導入する。
+1. 研究者が自分のTunnelを作成し、自分のHPCアカウントに導入する。
 2. iPhone/PCの個人ChatGPTから `get_system_info` を呼び出し、本人のUIDとhostnameを確認する。
 3. 許可された `~/work` 以下のソースを閲覧・検索する。
 4. 明示的なローカル設定変更後、差分編集とコマンド実行を利用する。
@@ -99,7 +99,7 @@ FS / Slurm / Git              FS / Slurm / Git
 
 - OpenAI PlatformでTunnel IDとRuntime API Keyを各ユーザーが用意する必要がある。
 - Tunnelの料金・利用可否は各アカウントで確認する。無料であることは未確認。
-- shamから `api.openai.com:443` の実際のTunnel APIにアクセスできるかは、APIキー付きの `tunnel-client doctor` で確認する。`curl` の単純なHTTP応答だけでは接続可否を確定できない。
+- 対象クラスタから `api.openai.com:443` の実際のTunnel APIにアクセスできるかは、APIキー付きの `tunnel-client doctor` で確認する。`curl` の単純なHTTP応答だけでは接続可否を確定できない。
 - APIキー未提供時には**リモートTunnelからの接続試験は行わない**。
 
 ## 9. 公式参照

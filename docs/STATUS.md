@@ -1,15 +1,31 @@
 # Verification status
 
-HPC MCP 0.2.0 has been tested on a single Linux HPC login node with a non-root user account.
+HPC MCP **0.2.0** remains a research prototype. Verification below distinguishes
+automated tests from actual cluster or ChatGPT host tests.
 
-- Local MCP tool discovery, JSON-RPC stdio interactions, read/write guards and opt-in foreground/background execution have been exercised.
-- A private OpenAI Secure MCP Tunnel connection was exercised through ChatGPT. The v0.2.0 scheduler and site-tool additions have not yet been refreshed in the ChatGPT plugin's cached tool definitions.
-- Per-user systemd persistence was tested on a host with `Linger=yes`.
-- The scheduler adapters and site command registry passed **51 unit and integration tests**; adapter scheduler submissions and cancellations were mocked.
-- Slurm and PBS scheduler adapters were tested with mock command responses (without real submissions or cancellations); **no live batch jobs have been submitted as part of these tests**.
-- Site-specific Slurm binary resolution was checked on a cluster with a restricted Tunnel PATH; read-only job listing succeeded.
-- `pytest` passed automated tests including mock Slurm/PBS scheduler commands and fixed site-tool registration on 2026-10-15.
+## Verified
 
-Not verified: **PBS live compatibility on an OpenPBS/PBS Professional cluster**, real user-configured site command portability, and operation across different HPC sites: sustained cron watchdog persistence on a real `Linger=no` system, a separate Linux user and Tunnel pair, failover after reboot, and large concurrent workloads. The test suite uses simulated scheduler and service backends and must not be treated as proof of production security.
+- A per-user MCP connection over a private Secure MCP Tunnel has been tested
+  in ChatGPT on a Linux HPC login node.
+- Core read tools, opt-in command tools, Git tools, scheduler read operations,
+  and user-managed Tunnel lifecycle have been exercised in development.
+- Slurm/PBS scheduler adapter behavior and site-tool registration are exercised
+  using mocked scheduler/site command responses. They are not evidence of
+  production PBS compatibility.
+- The optional MCP File Manager extension has registration/configuration tests.
+  File Manager UI v16 was interactively verified in ChatGPT with an initial
+  collapsed Explorer and a right-hand tab on ohtaka.
+- On 2026-10-18, the HPC-MCP Python test suite passed **64 tests**
+  in the ohtaka development environment, after moving the unrelated monitoring tests to HPC-PerfDiag. This count is a dated observation,
+  not a guarantee for every subsequent change.
 
-Sensitive host/user-specific operational notes belong in an untracked `docs/STATUS.local.md`, not in the public repository.
+## Not yet verified across environments
+
+- Live PBS/OpenPBS scheduler compatibility and portable site-command execution.
+- Multiple independent HPC sites, users, Tunnel identities and failover.
+- Sustained cron persistence on all `Linger=no` environments and reboot recovery.
+- Production hardening and exhaustive security guarantees for command execution.
+
+The example configurations under `examples/sites/` are machine-specific and
+may require adaptation. Private user credentials and operational logs are not
+part of this repository.

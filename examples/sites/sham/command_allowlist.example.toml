@@ -1,6 +1,6 @@
 # Opt-in command allowlist for a sham-style Linux/HPC development environment.
 # Merge this [commands] table into ~/.config/hpc-mcp/config.toml.
-# Set [permissions] enable_commands = true (already enabled on sham).
+# Set [permissions] enable_commands = true only after reviewing the risks.
 # This is NOT a sandbox: make, cmake, compilers, Python, Git and MPI may
 # execute other programs with the full privileges of the Linux user.
 #
